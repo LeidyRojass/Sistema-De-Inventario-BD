@@ -1,0 +1,681 @@
+PROCEDIMIENTOS 
+-- // EMPLEADOS //
+-- AGREGAR NUEVO EMPLEADO
+DELIMITER $$
+CREATE PROCEDURE AgregarEmpleado(IN nombreEmpleado VARCHAR(50) ,direccionEmpleado VARCHAR(50), telefEmpleado INT(30))
+BEGIN
+    INSERT INTO empleado (nombrEmpleado, direccionEmpleado, telefEmpleado)
+    VALUES (nombreEmpleado, direccionEmpleado, telefEmpleado);
+END $$
+DELIMITER ;
+CALL AgregarEmpleado('NombreEmpleado', 'DireccionEmpleado', 98765432);
+drop procedure agregarempleado ;
+
+
+
+-- ELIMINAR EMPLEADO
+DELIMITER $$
+CREATE PROCEDURE EliminarEmpleado
+(
+    IN id int
+)
+BEGIN
+    DELETE FROM Empleado WHERE idEmpleado = id;
+END $$
+DELIMITER ;
+CALL EliminarEmpleado(1);
+
+
+-- OBTENER REPORTE DE EMPLEADOS
+DELIMITER $$
+CREATE PROCEDURE ObtenerEmpleados()
+BEGIN
+    SELECT *
+    FROM Empleado;
+END $$
+DELIMITER ;
+
+
+
+-- BUSCAR EMPLEADO
+DELIMITER $$
+CREATE PROCEDURE BuscarEmpleado(IN empleado VARCHAR(50))
+BEGIN
+    SELECT *
+    FROM Empleado
+    WHERE nombreEmpleado LIKE CONCAT(empleado, '%');
+END $$
+DELIMITER ;
+CALL BuscarEmpleado('nombre o apellido a buscar');
+
+-- ACTUALIZAR DATOS DEL EMPLEADO
+DELIMITER $$
+CREATE PROCEDURE ActualizarEmpleado(IN id int, nombreEmpleado varchar(50), direccionEmpleado varchar(50), telefEmpleado int(30),estado varchar (50))
+BEGIN
+    UPDATE Empleado
+    SET
+        nombreEmpleado = nombreEmpleado,
+        direccionEmpleado = direccionEmpleado,
+        telefEmpleado = telefEmpleado,
+        estado = estado
+    WHERE idEmpleado = id;
+END $$
+DELIMITER ;
+
+
+-- AGREAR PROVEEDOR
+DELIMITER $$
+CREATE PROCEDURE AgregarProveedor(
+    IN nombreProveedor VARCHAR(50),
+    direccionProveedor VARCHAR(50),
+    telefProveedor INT(30)
+)
+BEGIN
+    INSERT INTO Proveedor (nombreProveedor, direccionProveedor, telefProveedor)
+    VALUES (nombreProveedor, direccionProveedor, telefProveedor);
+END $$
+DELIMITER ;
+CALL AgregarProveedor('NombreProveedor', 'ApellidoProveedor', 'DireccionProveedor', 987654321);
+
+-- ELIMINAR PROVEEDOR
+DELIMITER $$
+CREATE PROCEDURE EliminarProveedor(
+    IN id INT
+)
+BEGIN
+    DELETE FROM Proveedor WHERE idProveedor = id;
+END $$
+DELIMITER ;
+CALL EliminarProveedor(1);
+
+-- OBTENER REPORTE DE PROVEEDORES
+DELIMITER $$
+CREATE PROCEDURE ObtenerProveedores()
+BEGIN
+    SELECT * FROM Proveedor;
+END $$
+DELIMITER ;
+CALL ObtenerReporteProveedores();
+
+-- BUSCAR PROVEEDOR
+DELIMITER $$
+CREATE PROCEDURE BuscarProveedor(
+    IN proveedor VARCHAR(50)
+)
+BEGIN
+    SELECT * FROM Proveedor
+    WHERE nombreProveedor LIKE CONCAT(proveedor, '%');
+END $$
+DELIMITER ;
+CALL BuscarProveedor('nombre o apellido a buscar');
+
+-- ACTUALIZAR DATOS DEL PROVEEDOR
+DELIMITER $$
+CREATE PROCEDURE ActualizarProveedor(
+    IN id INT,
+    nombreProveedor VARCHAR(50),
+    direccionProveedor VARCHAR(50),
+    telefProveedor INT(30)
+)
+BEGIN
+    UPDATE Proveedor
+    SET
+        nombreProveedor = nombreProveedor,
+        direccionProveedor = direccionProveedor,
+        telefProveedor = telefProveedor
+    WHERE idProveedor = id;
+END $$
+DELIMITER ;
+
+-- // CLIENTES //
+-- AGREGAR NUEVO CLIENTE
+DELIMITER $$
+CREATE PROCEDURE AgregarCliente(
+    IN nombreCliente VARCHAR(50),
+    direccionCliente VARCHAR(50),
+    telefCliente INT(30)
+)
+BEGIN
+    INSERT INTO Cliente (nombreCliente, direccionCliente, telefCliente)
+    VALUES (nombreCliente, direccionCliente, telefCliente);
+END $$
+DELIMITER ;
+CALL AgregarCliente('NombreCliente', 'ApellidoCliente', 'DireccionCliente', 123456789);
+
+-- ELIMINAR CLIENTE
+DELIMITER $$
+CREATE PROCEDURE EliminarCliente(
+    IN id INT
+)
+BEGIN
+    DELETE FROM Cliente WHERE idCliente = id;
+END $$
+DELIMITER ;
+CALL EliminarCliente();
+
+-- OBTENER REPORTE DE CLIENTES
+DELIMITER $$
+CREATE PROCEDURE ObtenerClientes()
+BEGIN
+    SELECT * FROM Cliente;
+END $$
+DELIMITER ;
+CALL ObtenerReporteClientes();
+
+DELIMITER $$
+CREATE PROCEDURE ObtenerPermisos()
+BEGIN
+SELECT *
+FROM permisos;
+END $$
+
+-- BUSCAR CLIENTE
+DELIMITER $$
+CREATE PROCEDURE BuscarCliente(
+    IN cliente VARCHAR(50)
+)
+BEGIN
+    SELECT * FROM Cliente
+    WHERE nombreCliente LIKE CONCAT(cliente, '%');
+END $$
+DELIMITER ;
+CALL BuscarCliente('nombre o apellido a buscar');
+
+-- ACTUALIZAR DATOS DEL CLIENTE
+DELIMITER $$
+CREATE PROCEDURE ActualizarCliente(
+    IN id INT,
+    nombreCliente VARCHAR(50),
+    direccionCliente VARCHAR(50),
+    telefCliente INT(30)
+)
+BEGIN
+    UPDATE Cliente
+    SET
+        nombreCliente = nombreCliente,
+        direccionCliente = direccionCliente,
+        telefCliente = telefCliente
+    WHERE idCliente = id;
+END $$
+DELIMITER ;
+
+-- // CATEGORIAS//
+
+-- AGREGAR CATEGORIAS
+DELIMITER $$
+CREATE PROCEDURE AgregarCategoria(
+    IN nombreCategoria varchar(50)
+)
+BEGIN
+    INSERT INTO Categoria (nombreCategoria) VALUES (nombreCategoria);
+END $$
+DELIMITER ;
+CALL AgregarCategoria('Nueva Categoria');
+
+
+-- ELIMINAR CATEGORIAS
+DELIMITER $$
+CREATE PROCEDURE EliminarCategoria(
+    IN id int
+)
+BEGIN
+    DELETE FROM Categoria WHERE idCategoria = id;
+END $$
+DELIMITER ;
+CALL EliminarCategoria(1);
+
+
+-- // PRODUCTOS //
+
+-- REPORTE DE TODOS LOS PRODUCTOS ORDENADOS POR CATEGORIA Y NOMBRE DE PRODUCTO
+DELIMITER $$
+CREATE PROCEDURE ReporteProductosPorCategoria()
+BEGIN
+    SELECT
+        P.idProducto,
+        P.nombreProducto,
+        P.precioProducto,
+        P.stockProducto,
+        CP.nombreCategoria AS categoria,
+        PR.nombreProveedor AS proveedor
+    FROM
+        Productos P
+    INNER JOIN
+        CategoriaProductos CP ON P.idCategoria = CP.idCategoria
+    INNER JOIN
+        Proveedor PR ON P.idProveedor = PR.idProveedor
+    ORDER BY
+        CP.nombreCategoria, P.nombreProducto;
+END $$
+DELIMITER ;
+CALL ReporteProductosPorCategoria();
+
+-- AGREGAR NUEVO PRODUCTO
+DELIMITER $$
+CREATE PROCEDURE AgregarProducto(
+    IN nombreProducto VARCHAR(50),
+    IN precioProducto DECIMAL(20, 2),
+    IN stockProducto INT,
+    IN idCategoria INT,
+    IN idProveedor INT
+)
+BEGIN
+    INSERT INTO Productos (
+        nombreProducto,
+        precioProducto,
+        stockProducto,
+        idCategoria,
+        idProveedor
+    )
+    VALUES (
+        nombreProducto,
+        precioProducto,
+        stockProducto,
+        idCategoria,
+        idProveedor
+    );
+END $$
+DELIMITER ;
+CALL AgregarProducto('Nuevo Producto',10,stock,categoria,proveedor);
+
+-- ELIMINAR PRODUCTO
+DELIMITER $$
+CREATE PROCEDURE EliminarProducto(
+    IN id int
+)
+BEGIN
+    DELETE FROM Productos WHERE idProducto = id;
+END $$
+DELIMITER ;
+CALL EliminarProducto(1);
+
+-- BUSCAR PRODUCTO
+DELIMITER $$
+CREATE PROCEDURE BuscarProducto(
+    IN busqueda VARCHAR(50)
+)
+BEGIN
+    SELECT 
+        p.idProducto,
+        p.nombreProducto,
+        p.precioProducto,
+        p.stockProducto,
+        c.nombreCategoria AS categoria,
+        prov.nombreProveedor AS proveedor
+    FROM 
+        Productos p
+    INNER JOIN 
+        CategoriaProductos c ON p.idCategoria = c.idCategoria
+    INNER JOIN 
+        Proveedor prov ON p.idProveedor = prov.idProveedor
+    WHERE
+        p.nombreProducto LIKE CONCAT('%', busqueda, '%')
+        OR p.stockProducto LIKE CONCAT('%', busqueda, '%');
+END $$
+DELIMITER ;
+CALL BuscarProducto('CP');
+
+-- ACTUALIZAR PRODUCTOS
+DELIMITER $$
+CREATE PROCEDURE ActualizarProducto(
+    IN idProducto INT,
+    IN nuevoNombre VARCHAR(50),
+    IN nuevoPrecio DECIMAL(20, 2),
+    IN nuevoStock INT,
+    IN nuevaCategoria INT,
+    IN nuevoProveedor INT
+)
+BEGIN
+    UPDATE Productos
+    SET
+        nombreProducto = nuevoNombre,
+        precioProducto = nuevoPrecio,
+        stockProducto = nuevoStock,
+        idCategoria = nuevaCategoria,
+        idProveedor = nuevoProveedor
+    WHERE
+        idProducto = idProducto;
+END $$
+DELIMITER ;
+
+-- // VENTAS //
+
+-- AGREGAR NUEVA VENTA
+DELIMITER $$
+CREATE PROCEDURE AgregarNuevaVenta(
+    IN idEmpleado_param INT,
+    IN idCliente_param INT,
+    IN idProducto_param INT,
+    IN cantidad_param INT,
+    IN precioUnitario_param DECIMAL(20,2)
+)
+BEGIN
+    -- Insertar en la tabla Venta
+    INSERT INTO Venta (idEmpleado, idCliente, fechaVenta)
+    VALUES (idEmpleado_param, idCliente_param, NOW());
+
+    -- Obtener el id_venta generado
+    SET @idVenta_param = LAST_INSERT_ID();
+
+    -- Insertar en la tabla DetalleVenta
+    INSERT INTO DetalleVenta (idVenta, idProducto, cantidad, total)
+    VALUES (@idVenta_param, idProducto_param, cantidad_param, total_param);
+    
+    -- Puedes realizar más operaciones aquí si es necesario
+
+END $$
+DELIMITER ;
+CALL AgregarNuevaVenta(1, 1, 10, 5, 50.00);
+
+
+-- REPORTE DE TODAS LAS VENTAS
+DELIMITER $$
+CREATE PROCEDURE ObtenerVentasDetalladas()
+BEGIN
+    SELECT
+        v.idVenta AS 'ID Venta',
+        v.idEmpleado AS 'ID Empleado',
+        CONCAT(c.nombreCliente, ' ', c.apellidoCliente) AS 'Nombre Cliente',
+        p.nombreProducto AS 'Nombre Producto',
+        dv.cantidad AS 'Cantidad',
+        dv.total AS 'total',
+        v.fechaVenta AS 'Fecha Venta'
+    FROM
+        Venta v
+    INNER JOIN
+        Cliente c ON v.idCliente = c.idCliente
+    INNER JOIN
+        DetalleVenta dv ON v.idVenta = dv.idVenta
+    INNER JOIN
+        Productos p ON dv.idProducto = p.idProducto;
+END $$
+DELIMITER ;
+CALL ObtenerVentasDetalladas();
+
+--  PROCEDIMIENTO PERMISOS
+Delimiter $$
+CREATE PROCEDURE ObtenerPermiso()
+BEGIN 
+SELECT * FROM permiso; 
+END$$
+
+
+-- REPORTE DE VENTAS POR FECHA
+DELIMITER $$
+CREATE PROCEDURE ObtenerVentasPorFecha()
+BEGIN
+    SELECT
+        v.idVenta AS 'ID Venta',
+        v.idEmpleado AS 'ID Empleado',
+        c.nombreCliente AS 'Nombre Cliente',
+        dv.idProducto AS 'ID Producto',
+        p.nombreProducto AS 'Nombre Producto',
+        dv.cantidad AS 'Cantidad',
+        dv.total AS 'total',
+        v.fechaVenta AS 'Fecha Venta'
+    FROM
+        Venta v
+    INNER JOIN
+        Cliente c ON v.idCliente = c.idCliente
+    INNER JOIN
+        DetalleVenta dv ON v.idVenta = dv.idVenta
+    INNER JOIN
+        Productos p ON dv.idProducto = p.idProducto
+    ORDER BY
+        v.fechaVenta DESC;
+END $$
+DELIMITER ;
+CALL ObtenerVentasPorFecha();
+
+-- REPORTE DE VENTAS POR PRECIO
+DELIMITER $$
+CREATE PROCEDURE ObtenerVentasPorPrecio()
+BEGIN
+    SELECT
+        v.idVenta AS 'ID Venta',
+        v.idEmpleado AS 'ID Empleado',
+        c.nombreCliente AS 'Nombre Cliente',
+        dv.idProducto AS 'ID Producto',
+        p.nombreProducto AS 'Nombre Producto',
+        dv.cantidad AS 'Cantidad',
+        dv.total AS 'total',
+        v.fechaVenta AS 'Fecha Venta'
+    FROM
+        Venta v
+    INNER JOIN
+        Cliente c ON v.idCliente = c.idCliente
+    INNER JOIN
+        DetalleVenta dv ON v.idVenta = dv.idVenta
+    INNER JOIN
+        Productos p ON dv.idProducto = p.idProducto
+    ORDER BY
+        dv.total DESC; -- Ordena por precio unitario en orden descendente (mayor precio primero)--
+END $$
+DELIMITER ;
+CALL ObtenerVentasPorPrecio();
+
+-- REPORTE DE VENTAS POR NOMBRE DE CLIENTES
+DELIMITER $$
+CREATE PROCEDURE ObtenerVentasPorNombreCliente()
+BEGIN
+    SELECT
+        v.idVenta AS 'ID Venta',
+        v.idEmpleado AS 'ID Empleado',
+        c.nombreCliente AS 'Nombre Cliente',
+        dv.idProducto AS 'ID Producto',
+        p.nombreProducto AS 'Nombre Producto',
+        dv.cantidad AS 'Cantidad',
+        dv.total AS 'total',
+        v.fechaVenta AS 'Fecha Venta'
+    FROM
+        Venta v
+    INNER JOIN
+        Cliente c ON v.idCliente = c.idCliente
+    INNER JOIN
+        DetalleVenta dv ON v.idVenta = dv.idVenta
+    INNER JOIN
+        Productos p ON dv.idProducto = p.idProducto
+    ORDER BY
+        c.nombreCliente; -- Ordena por nombre del cliente en orden alfabético
+END $$
+DELIMITER ;
+CALL ObtenerVentasPorNombreCliente();
+
+
+-- TRIGGER REGISTRO DE CLIENTES
+
+CREATE TABLE RegistroCliente (
+    idRegistro INT PRIMARY KEY AUTO_INCREMENT,
+    idCliente INT,
+    fechaRegistro DATETIME,
+    FOREIGN KEY (idCliente) REFERENCES Cliente(idCliente)
+);
+drop table registrocliente;
+DELIMITER $$
+CREATE TRIGGER AfterInsertCliente
+BEFORE INSERT ON Cliente
+FOR EACH ROW
+BEGIN
+    INSERT INTO RegistroCliente (idCliente, fechaRegistro)
+    VALUES (NEW.idCliente, NOW());
+END $$
+DELIMITER ;
+
+SELECT * FROM RegistroCliente;
+SELECT * FROM Cliente;
+
+
+SELECT * FROM RegistroCliente;
+DROP TABLE IF EXISTS RegistroCliente;
+
+
+
+-- TRIGGER REGISTRO DE PRODUCTOS
+CREATE TABLE RegistroProducto 
+(
+    idRegistro INT PRIMARY KEY AUTO_INCREMENT,
+    idProducto INT,
+    fechaRegistro DATETIME,
+    FOREIGN KEY (idProducto) REFERENCES Productos(idProducto)
+);
+
+
+
+-- VISTAS
+-- EMPLEADOS 
+CREATE VIEW vista_EmpleadoActivo AS
+SELECT * FROM Empleado
+where idEmpleado;
+SELECT * FROM vista_EmpleadoActivo;
+
+-- ---------------------------------------------------------------------------
+-- PROVEEDORES
+CREATE VIEW Vista_Proveedores AS
+SELECT * from Proveedor
+where idProveedor;
+    
+SELECT * FROM Vista_Proveedores ;
+
+-- CLIENTES
+create view vista_Cliente As
+select * from cliente
+where idCliente;
+SELECT * FROM vista_Cliente;
+
+
+-- PRODUCTOS
+create view vista_Producto AS
+select * from productos
+where idCategoria;
+select * from vista_Producto;
+
+-- PRODUCTOS
+create view vista_PrecioProductos AS
+select precioProducto from productos
+where idProducto;
+select precioProducto from vista_Productos;
+
+
+
+
+DELIMITER $$
+CREATE FUNCTION ObtenerStockTotalPorCategoria()
+RETURNS TABLE
+AS
+RETURN (
+    SELECT
+        idCategoria,
+        nombreCategoria,
+        SUM(stock) AS stockTotal
+    FROM
+        Productos
+    GROUP BY
+        idCategoria, nombreCategoria
+END
+DELIMITER ;
+
+-- SELECT * FROM ObtenerStockTotalPorCategoria();
+DELIMITER $$
+CREATE FUNCTION SumarStockPorCategoria(categoria_id INT)
+RETURNS INT
+BEGIN
+    DECLARE totalStock INT;
+    SELECT SUM(stock) INTO totalStock
+    FROM Productos
+    WHERE idCategoria = categoria_id;
+    IF totalStock IS NULL THEN
+        SET totalStock = 0;
+    END IF;
+    RETURN totalStock;
+END $$
+DELIMITER ;
+
+SELECT SumarStockPorCategoria(2) AS StockdeCategoria;
+
+
+
+
+
+
+-- PROCEDIMIENTOS
+-- PROCEDIMIENTO PARA INSERTAR CLIENTES
+DELIMITER $$
+CREATE PROCEDURE InsertarCliente(
+    IN IdCliente INT,
+    IN NombreCliente VARCHAR(20),
+    IN DireccionCliente VARCHAR(50),
+    IN TelefCliente INT
+)
+BEGIN
+    INSERT INTO Cliente (idCliente, NombreCliente, DireccionCliente, TelefCliente) VALUES (IdCliente, NombreCliente, DireccionCliente, TelefCliente);
+END$$
+DELIMITER ;
+
+CALL InsertarCliente(4, 'Carmen', 'Barrio Lindo', 790258505);
+
+SELECT * FROM cliente;
+
+DROP PROCEDURE IF EXISTS InsertarCliente;
+
+-------------------------------------------------------------------------------------------
+-- PROCEDIMIENTO PARA OBTENER LA INFORMACION DE UN CLIENTE EN BASE A SU ID
+DELIMITER $$
+CREATE PROCEDURE ObtenerClientePorID(
+    IN ClienteID INT
+)
+BEGIN
+    SELECT * FROM Cliente WHERE idCliente = ClienteID;
+END$$
+DELIMITER ;
+
+CALL ObtenerClientePorID(1);
+
+SELECT * FROM cliente;
+
+DROP PROCEDURE IF EXISTS ObtenerClientePorID;
+
+
+
+-- INSERTAR CATEGORÍAS
+INSERT INTO Categoria (idCategoria, nombre) VALUES 
+(1, 'ClaseA'),
+(2, 'ClaseB'),
+(3, 'ClaseC');
+
+-- INSERTAR EMPLEADOS
+INSERT INTO Empleado (idEmpleado,  nombreEmpleado ,direccionEmpleado, telefEmpleado, estado) VALUES
+(1, 'Morgan','Av.Los Cusis Calle Motoyoe', 7654821, 'activo1'),
+(2, 'Maria' ,'Av. Zaragoza # 325', 6395628,'activo2'),
+(3, 'Pablo','Av. Motoyoe', 6860494, 'inactivo1'),
+(4, 'Jhonn','Calle Zaragoza # 325','4987521', 'activo3');
+
+
+-- INSERTAR CLIENTES
+INSERT INTO cliente (idCliente, nombreCliente, direccionCliente, telefCliente) VALUES
+(1, 'Julio', 'Calle Romay # 53', 72140671),
+(2, 'Nicolas', 'Avenida Pampa de la Isla ', 62436864),
+(3, 'Carla', 'Av.Motojobobo Calle Surutú', 75001645);
+
+-- INSERTAR PROVEEDORES
+INSERT INTO Proveedor (idProveedor, nombreProveedor, direccionProveedor, telefProveedor) VALUES
+(1, 'Mario', 'Av.Irala calle# 501', 6314942),
+(2, 'Cristobal', 'Avenida Che Guevara #325', 79008042);
+
+-- PRODUCTOS -- 
+INSERT INTO Productos (idProducto, nombreProducto, precioProducto, stockProducto, idCategoria, idProveedor) VALUES
+(1, 'Almendrillo', 7, 100, 1, 2),
+(2, 'Curupau', 9,100, 1, 2),
+(3, 'Mapajo', 10, 100, 1,2),
+(4,'Ochoo', 20, 100, 1, 1),
+(13, 'Coquino', 15, 100, 2, 1),
+(6, 'Mururé', 8, 100, 2, 2),
+(7, 'Verdolago', 10, 100, 2, 1),
+(8, 'Yesquero', 9, 100, 2, 2),
+(9, 'Palo Maria', 12, 100, 3, 1),
+(10, 'Paquio', 8, 100, 3, 1),
+(11, 'Tajibo', 11, 100, 3, 1),
+(12, 'Sirari', 6, 100, 3, 2);
+
+select * from productos;
+select * from cliente;
+select * from empleado;
